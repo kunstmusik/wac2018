@@ -1,0 +1,290 @@
+<html>
+	<head>
+
+    <title>WebAudio Csound - Steven Yi, Victor Lazzarini, Edward Costello</title>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+    <style>
+      .reveal blockquote {
+          text-align: left;
+          width: 90%;
+          border: none;
+          box-shadow: none;
+          background: none;
+      }
+      .reveal blockquote:before { content: ''; }
+      .reveal blockquote:after { content: ''; }
+
+      .process-box1 {
+        background: #ccc;
+        color: black;
+        }
+
+      .arrow {
+        font-size: 2rem;
+      }
+			.reveal section p { text-align: left;}
+
+      .reveal section img { border: none; }
+
+    </style>
+
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+
+          <h1>WebAssembly AudioWorklet Csound</h1>
+          <h3>Web Audio Conference | Berlin</h3>
+          <h3>19 September 2018</h3>
+          <p style="text-align: center">Steven Yi &nbsp;&nbsp;&nbsp;Victor Lazzarini &nbsp;&nbsp;&nbsp; Edward Costello</p>
+        </section>
+
+        <section>
+          <h2>Presentation Outline</h2>
+          <ol style-"font-size: 0.9em">
+            <li>The Csound Ecosystem</li>
+            <li>Csound on the Web</li>
+            <li>WebAssembly AudioWorklet Csound</li>
+            <!--<li>Use Cases</li>-->
+            <li>Demonstration</li>
+            <li>Issues</li>
+            <li>Conclusions</li>
+          </ol>
+        </section>
+
+<section>
+        <section>
+          <h2>The Csound Ecosystem</h2>
+        </section>
+
+				<section>
+					<p>Csound is a sound and music computing system that is
+						fully programmable via its domain-specific language. </p>
+          <p>The Csound Ecosystem has at its centre the Csound library (libcsound),
+					with a C/C++ API. It has been ported to a variety of platforms,
+				from embedded to mobile to desktop to supercomputers.</p>
+				<p>Since 2014, it has also been present on the Web platform.
+				</p>
+        </section>
+</section>
+
+        <section>
+        <section>
+          <h2>Csound on the Web</h2>
+        </section>
+
+				<section>
+					<p>
+         The first iteration of Csound using Web technologies was
+				 presented in two versions (WAC 2015, Paris):
+			   </p>
+				 <ul>
+         <li> PNaCl Csound: Pepper API. </li>
+         <li> WebAudio Csound: asm.js, ScriptProcessorNode (SPN). </li>
+				</ul>
+				<p>
+					The WebAudio version was based on a wrapper class, CsoundObj,
+					which provided a mediated access to the underlying libcsound.
+			</p>
+        </section>
+				<section>
+					<p>
+				 With the demise of PNaCl, we concentrated development on the WebAudio
+				 version of Csound.
+				 </p>
+				 <p>
+         Around that time, WebAssembly (WASM) became available as a target for
+				 the Emscripten compiler, and a WASM version of libcsound was
+				 developed (by retargeting the original asm.js build). This was used with SPN.
+				 </p>
+				</section>
+
+			</section>
+			<section>
+        <section>
+          <h2>WebAssembly AudioWorklet Csound</h2>
+        </section>
+				<section>
+					<p>
+          With the introduction of AudioWorklet (AW) in the Chrome browser, we
+					developed a new version of WebAudio Csound:
+			   </p>
+				 <ul>
+         <li>Refactored Javascript code with frontend and Node APIs.</li>
+         <li>Developed two underlying node implementations based on AW and SPN. </li>
+         <li>Focused on WebAssembly and dropped support for asm.js.</li>
+				</ul>
+				<p>
+				 Selection of implementation is determined by the presence of
+				 AW. In browsers that do not support this, the system falls back to
+				 SPN.
+				</p>
+        </section>
+
+
+        <section>
+          <ul>
+            <li><strong>CsoundObj</strong>: Primary client API for WebAudio Csound. Used to create, control, and communicate with Csound Nodes.</li>
+            <li><strong>CsoundNode</strong>: Extends AudioWorkletNode, frontend to CsoundProcessor which uses WASM libcsound to process inputs and generate outputs in WebAudio thread.</li>
+            <li><strong>CsoundScriptProcessorNode</strong>: SPN node that uses WASM libcsound in main thread.</li> 
+        </section>
+
+				<section>
+					<p>
+			   This version of WebAudio Csound has been tested on a variety of platforms, with different browsers
+				 (Chrome, Firefox, Edge, and Safari) and different OS/HW (Windows, Linux, MacOS,
+				 iOS, and Android; desktop and mobile). Support for AW is currently limited
+				 to the Chrome/Chromium browsers.
+				 </p>
+				</section>
+
+
+</section>
+
+<!--  <section>-->
+<!--        <section>-->
+<!--          <h2>Use Cases</h2>-->
+<!--        </section>-->
+
+<!--    <section>-->
+<!--    <p>-->
+<!--       The embedding of Csound in Web applications allows the deployment of-->
+<!--       highly sophisticated audio signal processing functionality, with-->
+<!--       access to a huge collection of unit generators.-->
+<!--     </p>-->
+<!--     <p>-->
+<!--       Integrated with other Web technologies, it provides a formidable-->
+<!--       platform for sound and music computing. The-->
+<!--       combination of WASM and AW provides a level of performance that-->
+<!--       is near to the original PNaCl-based Csound.-->
+<!--     </p>-->
+<!--        </section>-->
+<!--        <section>-->
+<!--        <p> Use cases include:-->
+<!--         </p>-->
+<!--         <ul>-->
+<!--          <li> Web-based compositions, installations.</li>-->
+<!--          <li> Internet of Musical Things (IoMusT).</li>-->
+<!--          <li> Teaching tools. </li>-->
+<!--          <li> Web-based IDEs for Csound </li>-->
+<!--          <li> Sound and Music computing applications. </li>-->
+<!--        </ul>-->
+<!--            </section>-->
+
+
+<!--</section>-->
+<section>
+        <section>
+          <h2>Demonstrations</h2>
+        </section>
+
+				<section>
+					<ol>
+            <li>Glowing Orbs: <a href="https://kunstmusik.github.io/csound-p5js" target="_blank">Open</a></li>
+            <li>live.csound.com: <a href="https://live.csound.com" target="_blank">Open</a></li>
+            <li>Shimmer Reverb: <a href="./shimmer/index.html" target="_blank">Open</a></li>
+ 				</ol>
+			</section>
+
+</section>
+<section>
+        <section>
+          <h2>Issues</h2>
+        </section>
+
+				<section>
+					<ol>
+ 					<li>Audio computing interruptions
+            <ul>
+              <li>Dropped-out samples</li>
+              <li>Discussions with Chrome team</li>
+              <li>Garbage Collector? Thread Priority?</li>
+            </ul>
+          </li>
+ 					<li>WASM deployment
+            <ul>
+              <li>Binary Load</li>
+              <li>Synchronous/Asynchronous WASM Compile (multiple WASM binaries)</li>
+            </ul>
+          </li>
+          <li>Web Development
+            <ul> 
+              <li>Support for Web build tools (i.e., npm, webpack)</li>
+              <li>CDN deployment of Csound</li>
+            </ul>
+          </li>
+
+
+ 				</ol>
+			</section>
+				<!--<section>-->
+				<!-- <p>-->
+				<!--  While developing WAAW Csound, we noted the occasional presence of-->
+				<!--  dropped-out samples due to interruptions in the audio computing-->
+				<!--  thread. We have noted a number of non-optimal conditions for RT-->
+				<!--  audio in the AW implementation in Chrome. We have worked with-->
+				<!--  the Chrome team to mitigate these, but some of the problems appear-->
+				<!--  to be hard to solve, and the Web platform might never be fully RT-safe.-->
+				<!-- </p>-->
+				<!--</section>-->
+
+				<!--<section>-->
+				<!-- <p>-->
+				<!--  The deployment of compiled WASM modules within the AW/SPN contexts-->
+				<!--  is not as simple as we would have preferred. Due to competing requirements,-->
+				<!--  we have to package two different binary versions, for AW and SPN. This-->
+				<!--  might be solved if future versions of AW provide a means of passing-->
+				<!--  the binary module code as an argument to the AW constructor.-->
+				<!-- </p>-->
+				<!--</section>-->
+        </section>
+
+    <section>
+        <section>
+          <h2>Conclusions</h2>
+        </section>
+
+				<section>
+					<p> The new WebAssembly AudioWorklet path for WebAudio Csound provides a performant solution
+          for building music applications on the web.</p>  
+          <p> Providing a fallback WebAssembly SPN path provides coverage for the existing state of the web where AW is not yet implemented.</p>
+          <p>AudioWorklet has improved in Chrome since its first release in Chrome 66, but there are open questions on when and how to get past the issues discussed today.</p>
+
+				</section>
+        <section>
+          <p>Special thanks to Jari Kleimola, St&eacute;phane Letz, Henri Manson, and Hongchan Choi for their discussions and contributions to this work.</p>
+        </section>
+
+        <section>
+          <h2>Thank you!</h2>
+          <ul>
+            <li>Csound Homepage: https://www.csound.com</li>
+            <li>Email: Steven Yi &lt;stevenyi@gmail.com&gt;</li>
+        </section>
+	</section>
+		</div>
+		<script src="js/reveal.js"></script>
+		<script src="plugin/markdown/marked.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script>
+      Reveal.initialize({history: true});
+
+      // Make sure target is _blank for all links to allow
+      // working within MyCourses
+      document.querySelectorAll("a").forEach(
+                (l) => l.setAttribute("target", "_blank"));
+
+		</script>
+	</body>
+</html>
